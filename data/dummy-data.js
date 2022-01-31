@@ -1,8 +1,20 @@
 import Category from "../models/Category";
 
 export const SLEEPCAT = [
-  new Category("ss1", "Zen Mode", "#D9534F", "ZenMode"),
-  new Category("ss2", "Sleep Player", "#FFEEAD", "SleepPlayer"),
+  new Category(
+    "ss1",
+    "Zen Mode",
+    "#D9534F",
+    "ZenMode",
+    "https://cdn.pixabay.com/photo/2016/02/17/19/08/lotus-1205631_960_720.jpg"
+  ),
+  new Category(
+    "ss2",
+    "Sleep Player",
+    "#FFEEAD",
+    "SleepPlayer",
+    "https://cdn.pixabay.com/photo/2019/05/08/21/21/cat-4189697_960_720.jpg"
+  ),
 ];
 
 export const MEDITATIONCAT = [

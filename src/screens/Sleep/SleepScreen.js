@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Platform,
   TouchableNativeFeedback,
+  ImageBackground,
 } from "react-native";
 import { SLEEPCAT } from "../../../data/dummy-data";
 
@@ -20,23 +21,30 @@ const SleepScreen = (props) => {
   const renderGridItem = (itemData) => {
     return (
       <View style={styles.gridItem}>
-        <TouchableCmp
-          onPress={() => {
-            props.navigation.navigate({ routeName: itemData.item.loc });
+        <ImageBackground
+          source={{
+            uri: itemData.item.img,
           }}
-          style={styles.touchablecmp}
+          resizeMode="cover"
+          style={styles.image}
         >
-          <View
-            style={{
-              ...styles.container,
-              ...{ backgroundColor: itemData.item.color },
+          <TouchableCmp
+            onPress={() => {
+              props.navigation.navigate({ routeName: itemData.item.loc });
             }}
+            style={styles.touchablecmp}
           >
-            <Text style={styles.title} numberOfLines={2}>
-              {itemData.item.title}
-            </Text>
-          </View>
-        </TouchableCmp>
+            <View
+              style={{
+                ...styles.container,
+              }}
+            >
+              <Text style={styles.title} numberOfLines={2}>
+                {itemData.item.title}
+              </Text>
+            </View>
+          </TouchableCmp>
+        </ImageBackground>
       </View>
     );
   };
@@ -87,6 +95,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "white",
     textAlign: "right",
+  },
+  image: {
+    flex: 1,
+    justifyContent: "center",
   },
 });
 

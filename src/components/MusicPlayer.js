@@ -10,8 +10,10 @@ import {
   FlatList,
   Animated,
 } from "react-native";
+
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Slider from "@react-native-community/slider";
+import { Audio, Video } from "expo-av";
 import Color from "../../constant/Color";
 import songs from "../../data/music-data";
 
@@ -21,6 +23,10 @@ const MusicPlayer = () => {
   const scrollx = useRef(new Animated.Value(0)).current;
   const [songIndex, setSongIndex] = useState(0);
   const songSlider = useRef(null);
+
+  const [playbackObj, setPlaybackObj] = useState(null);
+  const [soundObj, setSoundObj] = useState(null);
+  const [currentTrack, setCurrentTrack] = useState({});
 
   useEffect(() => {
     scrollx.addListener(({ value }) => {
@@ -32,16 +38,104 @@ const MusicPlayer = () => {
     };
   }, []);
 
-  const skipToNext = () => {
+  handlePlayButton = async (audio) => {
+    //playing audio for first time
+    if (soundObj === null) {
+      const playbackObj = new Audio.Sound();
+      const status = await playbackObj.loadAsync(
+        {
+          uri: audio.uri,
+        },
+        { shouldPlay: true }
+      );
+      return (
+        setPlaybackObj(playbackObj), setSoundObj(status), setCurrentTrack(audio)
+      );
+    }
+
+    //pause the audio
+    if (
+      soundObj.isLoaded &&
+      soundObj.isPlaying &&
+      currentTrack.uri === audio.uri
+    ) {
+      const status = await playbackObj.setStatusAsync({ shouldPlay: false });
+      return setSoundObj(status);
+    }
+
+    //resume the audio
+    if (
+      soundObj.isLoaded &&
+      !soundObj.isPlaying &&
+      currentTrack.uri === audio.uri
+    ) {
+      const status = await playbackObj.playAsync();
+      return setSoundObj(status);
+    }
+  };
+
+  handleForwardButton = async (audio) => {
     songSlider.current.scrollToOffset({
       offset: (songIndex + 1) * width,
     });
+    // //playing audio for first time
+    if (soundObj === null) {
+      const playbackObj = new Audio.Sound();
+      const status = await playbackObj.loadAsync(
+        {
+          uri: audio.uri,
+        },
+        { shouldPlay: true }
+      );
+      return (
+        setPlaybackObj(playbackObj), setSoundObj(status), setCurrentTrack(audio)
+      );
+    }
+
+    //stopping previous current track and playing next track
+    if (soundObj.isLoaded && currentTrack.uri !== audio.uri) {
+      await playbackObj.stopAsync();
+      await playbackObj.unloadAsync();
+      const status = await playbackObj.loadAsync(
+        { uri: audio.uri },
+        { shouldPlay: true }
+      );
+      return (
+        setPlaybackObj(playbackObj), setSoundObj(status), setCurrentTrack(audio)
+      );
+    }
   };
 
-  const skipToPrevious = () => {
+  handlePreviousButton = async (audio) => {
     songSlider.current.scrollToOffset({
       offset: (songIndex - 1) * width,
     });
+    // //playing audio for first time
+    if (soundObj === null) {
+      const playbackObj = new Audio.Sound();
+      const status = await playbackObj.loadAsync(
+        {
+          uri: audio.uri,
+        },
+        { shouldPlay: true }
+      );
+      return (
+        setPlaybackObj(playbackObj), setSoundObj(status), setCurrentTrack(audio)
+      );
+    }
+
+    //stopping previous current track and playing next track
+    if (soundObj.isLoaded && currentTrack.uri !== audio.uri) {
+      await playbackObj.stopAsync();
+      await playbackObj.unloadAsync();
+      const status = await playbackObj.loadAsync(
+        { uri: audio.uri },
+        { shouldPlay: true }
+      );
+      return (
+        setPlaybackObj(playbackObj), setSoundObj(status), setCurrentTrack(audio)
+      );
+    }
   };
 
   const renderSongs = ({ index, item }) => {
@@ -101,7 +195,11 @@ const MusicPlayer = () => {
           </View>
         </View>
         <View style={styles.musicControls}>
-          <TouchableOpacity onPress={skipToPrevious}>
+          <TouchableOpacity
+            onPress={() => {
+              handlePreviousButton(songs[songIndex - 1]);
+            }}
+          >
             <Ionicons
               name="play-skip-back-outline"
               size={35}
@@ -109,14 +207,22 @@ const MusicPlayer = () => {
               style={{ marginTop: 25 }}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity
+            onPress={() => {
+              handlePlayButton(songs[songIndex]);
+            }}
+          >
             <Ionicons
               name="ios-pause-circle"
               size={75}
               color={Color.musicControlBtn}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={skipToNext}>
+          <TouchableOpacity
+            onPress={() => {
+              handleForwardButton(songs[songIndex + 1]);
+            }}
+          >
             <Ionicons
               name="play-skip-forward-outline"
               size={35}
