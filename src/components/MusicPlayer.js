@@ -16,6 +16,7 @@ import Slider from "@react-native-community/slider";
 import { Audio, Video } from "expo-av";
 import Color from "../../constant/Color";
 import songs from "../../data/music-data";
+import { set } from "react-native-reanimated";
 
 const { width, height } = Dimensions.get("window");
 
@@ -27,6 +28,16 @@ const MusicPlayer = () => {
   const [playbackObj, setPlaybackObj] = useState(null);
   const [soundObj, setSoundObj] = useState(null);
   const [currentTrack, setCurrentTrack] = useState({});
+  const [trackPlaying, setTrackPlaying] = useState(false);
+  const [playTime, setPlayTime] = useState(0);
+  const [playbackPostion, setPlaybackPosition] = useState(null);
+  const [currentTime, setCurrentTime] = useState(0);
+
+  const calculateSeekbar = () => {
+    if (playbackPostion !== null && playTime !== null) {
+      return playbackPostion / playTime;
+    }
+  };
 
   useEffect(() => {
     scrollx.addListener(({ value }) => {
@@ -38,6 +49,36 @@ const MusicPlayer = () => {
     };
   }, []);
 
+  renderPlayPause = (trackPlaying) => {
+    if (trackPlaying) {
+      return (
+        <Ionicons
+          name="ios-pause-circle"
+          size={75}
+          color={Color.musicControlBtn}
+        />
+      );
+    } else {
+      return (
+        <Ionicons
+          name="ios-play-circle"
+          size={75}
+          color={Color.musicControlBtn}
+        />
+      );
+    }
+  };
+
+  // renderPlayTime = (playTime) => {
+  //   if (playTime === 0) {
+  //     return;
+  //   } else {
+  //     min = Math.floor((playTime / 1000 / 60) << 0);
+  //     sec = Math.floor((playTime / 1000) % 60);
+  //     return `${min}:${sec}`;
+  //   }
+  // };
+
   handlePlayButton = async (audio) => {
     //playing audio for first time
     if (soundObj === null) {
@@ -48,8 +89,13 @@ const MusicPlayer = () => {
         },
         { shouldPlay: true }
       );
+      playbackObj.setOnPlaybackStatusUpdate(onPlaybackUpdateStatus);
       return (
-        setPlaybackObj(playbackObj), setSoundObj(status), setCurrentTrack(audio)
+        setPlayTime(parseInt(status.durationMillis)),
+        setPlaybackObj(playbackObj),
+        setSoundObj(status),
+        setCurrentTrack(audio),
+        setTrackPlaying(true)
       );
     }
 
@@ -60,7 +106,7 @@ const MusicPlayer = () => {
       currentTrack.uri === audio.uri
     ) {
       const status = await playbackObj.setStatusAsync({ shouldPlay: false });
-      return setSoundObj(status);
+      return setSoundObj(status), setTrackPlaying(false);
     }
 
     //resume the audio
@@ -70,71 +116,100 @@ const MusicPlayer = () => {
       currentTrack.uri === audio.uri
     ) {
       const status = await playbackObj.playAsync();
-      return setSoundObj(status);
+      return setSoundObj(status), setTrackPlaying(true);
     }
   };
 
-  handleForwardButton = async (audio) => {
-    songSlider.current.scrollToOffset({
-      offset: (songIndex + 1) * width,
-    });
-    // //playing audio for first time
-    if (soundObj === null) {
-      const playbackObj = new Audio.Sound();
-      const status = await playbackObj.loadAsync(
-        {
-          uri: audio.uri,
-        },
-        { shouldPlay: true }
-      );
-      return (
-        setPlaybackObj(playbackObj), setSoundObj(status), setCurrentTrack(audio)
-      );
+  onPlaybackUpdateStatus = (playbackStatus) => {
+    if (playbackStatus.isLoaded && playbackStatus.isPlaying) {
+      setPlaybackPosition(playbackStatus.positionMillis);
     }
+    // if (playbackStatus.didJustFinished) {
+    //   await handleForwardButton(songs[songIndex + 1]);
+    // }
+  };
 
-    //stopping previous current track and playing next track
-    if (soundObj.isLoaded && currentTrack.uri !== audio.uri) {
-      await playbackObj.stopAsync();
-      await playbackObj.unloadAsync();
-      const status = await playbackObj.loadAsync(
-        { uri: audio.uri },
-        { shouldPlay: true }
-      );
-      return (
-        setPlaybackObj(playbackObj), setSoundObj(status), setCurrentTrack(audio)
-      );
+  handleForwardButton = async (audio) => {
+    if (songIndex + 1 < songs.length) {
+      songSlider.current.scrollToOffset({
+        offset: (songIndex + 1) * width,
+      });
+      // //playing audio for first time
+      if (soundObj === null) {
+        const playbackObj = new Audio.Sound();
+        const status = await playbackObj.loadAsync(
+          {
+            uri: audio.uri,
+          },
+          { shouldPlay: true }
+        );
+        return (
+          setPlayTime(parseInt(status.durationMillis)),
+          setPlaybackObj(playbackObj),
+          setSoundObj(status),
+          setCurrentTrack(audio),
+          setTrackPlaying(true)
+        );
+      }
+
+      //stopping previous current track and playing next track
+      if (soundObj.isLoaded && currentTrack.uri !== audio.uri) {
+        await playbackObj.stopAsync();
+        await playbackObj.unloadAsync();
+        const status = await playbackObj.loadAsync(
+          { uri: audio.uri },
+          { shouldPlay: true }
+        );
+        return (
+          setPlayTime(parseInt(status.durationMillis)),
+          setPlaybackObj(playbackObj),
+          setSoundObj(status),
+          setCurrentTrack(audio),
+          setTrackPlaying(true)
+        );
+      }
     }
   };
 
   handlePreviousButton = async (audio) => {
-    songSlider.current.scrollToOffset({
-      offset: (songIndex - 1) * width,
-    });
-    // //playing audio for first time
-    if (soundObj === null) {
-      const playbackObj = new Audio.Sound();
-      const status = await playbackObj.loadAsync(
-        {
-          uri: audio.uri,
-        },
-        { shouldPlay: true }
-      );
-      return (
-        setPlaybackObj(playbackObj), setSoundObj(status), setCurrentTrack(audio)
-      );
-    }
+    if (songIndex - 1 >= 0) {
+      songSlider.current.scrollToOffset({
+        offset: (songIndex - 1) * width,
+      });
+      // //playing audio for first time
+      if (soundObj === null) {
+        const playbackObj = new Audio.Sound();
+        const status = await playbackObj.loadAsync(
+          {
+            uri: audio.uri,
+          },
+          { shouldPlay: true }
+        );
+        return (
+          setPlayTime(parseInt(status.durationMillis)),
+          setPlaybackObj(playbackObj),
+          setSoundObj(status),
+          setCurrentTrack(audio),
+          setTrackPlaying(true)
+        );
+      }
 
-    //stopping previous current track and playing next track
-    if (soundObj.isLoaded && currentTrack.uri !== audio.uri) {
-      await playbackObj.stopAsync();
-      await playbackObj.unloadAsync();
-      const status = await playbackObj.loadAsync(
-        { uri: audio.uri },
-        { shouldPlay: true }
-      );
-      return (
-        setPlaybackObj(playbackObj), setSoundObj(status), setCurrentTrack(audio)
-      );
+      //stopping previous current track and playing next track
+      if (soundObj.isLoaded && currentTrack.uri !== audio.uri) {
+        await playbackObj.stopAsync();
+        await playbackObj.unloadAsync();
+        const status = await playbackObj.loadAsync(
+          { uri: audio.uri },
+          { shouldPlay: true }
+        );
+        return (
+          setPlayTime(parseInt(status.durationMillis)),
+          setPlaybackObj(playbackObj),
+          setSoundObj(status),
+          setCurrentTrack(audio),
+          setTrackPlaying(true)
+        );
+      }
     }
   };
 
@@ -181,18 +256,44 @@ const MusicPlayer = () => {
         <View>
           <Slider
             style={styles.progressContainer}
-            value={10}
+            value={calculateSeekbar()}
             minimumValue={0}
-            maximumValue={100}
+            maximumValue={1}
             thumbTintColor={Color.musicProgressBar}
             minimumTrackTintColor={Color.musicProgressBar}
             maximumTrackTintColor="#fff"
-            onSlidingComplete={() => {}}
+            onValueChange={(value) => {
+              setCurrentTime(value);
+            }}
+            onSlidingStart={async () => {
+              if (!soundObj.isPlaying) {
+                return;
+              }
+              try {
+                await playbackObj.setStatusAsync({ shouldPlay: false });
+                setTrackPlaying(false);
+              } catch (err) {
+                console.log(err);
+              }
+            }}
+            onSlidingComplete={async (value) => {
+              if (soundObj === null) {
+                return;
+              }
+
+              try {
+                const status = await playbackObj.setPositionAsync(
+                  soundObj.durationMillis * value
+                );
+                setSoundObj(status);
+                setPlaybackPosition(status.positionMillis);
+                await playbackObj.setStatusAsync({ shouldPlay: true });
+                setTrackPlaying(true);
+              } catch (err) {
+                console.log(err);
+              }
+            }}
           />
-          <View style={styles.progressLabelContainer}>
-            <Text style={styles.ProgressLabelTxt}>0:00</Text>
-            <Text style={styles.ProgressLabelTxt}>3:55</Text>
-          </View>
         </View>
         <View style={styles.musicControls}>
           <TouchableOpacity
@@ -212,11 +313,7 @@ const MusicPlayer = () => {
               handlePlayButton(songs[songIndex]);
             }}
           >
-            <Ionicons
-              name="ios-pause-circle"
-              size={75}
-              color={Color.musicControlBtn}
-            />
+            {renderPlayPause(trackPlaying)}
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
