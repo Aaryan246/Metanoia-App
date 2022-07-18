@@ -9,7 +9,9 @@ const SleepNavigator = createStackNavigator(
   {
     SleepPage: SleepScreen,
     ZenMode: ZenModeScreen,
-    SleepPlayer: SleepPlayerScreen,
+    SleepPlayer: {
+      screen: SleepPlayerScreen,
+    },
   },
   {
     defaultNavigationOptions: {

@@ -1,15 +1,15 @@
 import { createStackNavigator } from "react-navigation-stack";
 import { createAppContainer } from "react-navigation";
 import SelfCareScreen from "../screens/Self Care/SelfCareScreen";
-import MoodScreen from "../screens/Self Care/MoodScreen";
-import DiaryScreen from "../screens/Self Care/DiaryScreen";
+import BubblePop from "../screens/Self Care/BubblePop";
+import BreatheScreen from "../screens/Self Care/BreatheScreen";
 import Color from "../../constant/Color";
 
 const SelfCareNavigator = createStackNavigator(
   {
     SelfCare: SelfCareScreen,
-    MoodTracker: MoodScreen,
-    Diary: DiaryScreen,
+    Bubble: BubblePop,
+    Breathing: BreatheScreen,
   },
   {
     defaultNavigationOptions: {
@@ -23,5 +23,18 @@ const SelfCareNavigator = createStackNavigator(
     },
   }
 );
+
+SelfCareNavigator.navigationOptions = ({ navigation }) => {
+  let tabBarVisible = true;
+  if (navigation.state.index >= 0) {
+    return {
+      tabBarVisible: false,
+    };
+  }
+
+  return {
+    tabBarVisible,
+  };
+};
 
 export default createAppContainer(SelfCareNavigator);

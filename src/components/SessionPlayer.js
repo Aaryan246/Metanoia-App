@@ -7,20 +7,18 @@ import {
   SafeAreaView,
   Dimensions,
   Image,
-  FlatList,
   Animated,
 } from "react-native";
 
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Slider from "@react-native-community/slider";
-import { Audio, Video } from "expo-av";
+import { Audio } from "expo-av";
 import Color from "../../constant/Color";
-import songs from "../../data/music-data";
-import { set } from "react-native-reanimated";
+import songs from "../../data/session-data";
 
 const { width, height } = Dimensions.get("window");
 
-const MusicPlayer = () => {
+const SessionPlayer = () => {
   const scrollx = useRef(new Animated.Value(0)).current;
   const [songIndex, setSongIndex] = useState(0);
   const songSlider = useRef(null);
@@ -114,9 +112,6 @@ const MusicPlayer = () => {
     if (playbackStatus.isLoaded && playbackStatus.isPlaying) {
       setPlaybackPosition(playbackStatus.positionMillis);
     }
-    // if (playbackStatus.didJustFinished) {
-    //   await handleForwardButton(songs[songIndex + 1]);
-    // }
   };
 
   handleForwardButton = async (audio) => {
@@ -326,7 +321,7 @@ const MusicPlayer = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.musicBg,
+    backgroundColor: Color.SessionBg,
   },
   mainContainer: {
     flex: 1,
@@ -353,12 +348,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "200",
+    fontFamily: "Poppins-SemiBold",
     textAlign: "center",
     color: "#EEEEEE",
   },
   artist: {
     fontSize: 16,
     fontWeight: "600",
+    fontFamily: "Poppins-Regular",
     textAlign: "center",
     color: "#EEEEEE",
   },
@@ -396,4 +393,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MusicPlayer;
+export default SessionPlayer;

@@ -1,16 +1,20 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import MusicPlayer from "../../components/MusicPlayer";
 
 const SleepPlayerScreen = () => {
   return (
     <View style={styles.screen}>
-      <Text>Sleep Player</Text>
+      <MusicPlayer />
     </View>
   );
 };
 
 SleepPlayerScreen.navigationOptions = {
-  headerTitle: "Calmante",
+  headerTitle: "Player",
+  headerStyle: {
+    backgroundColor: "#222831",
+  },
 };
 
 const styles = StyleSheet.create({

@@ -1,10 +1,11 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import ChatBot from "../components/chatBot";
 
-const ChatbotScreen = () => {
+const ChatbotScreen = (props) => {
   return (
     <View style={styles.screen}>
-      <Text>Hello</Text>
+      <ChatBot props={props} />
     </View>
   );
 };

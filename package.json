@@ -12,16 +12,21 @@
   "dependencies": {
     "@expo-google-fonts/poppins": "^0.2.2",
     "@expo/vector-icons": "^12.0.0",
+    "@react-native-async-storage/async-storage": "^1.15.0",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-native-community/slider": "^4.2.0",
     "@react-navigation/bottom-tabs": "^5.11.15",
     "expo": "~44.0.0",
     "expo-app-loading": "~1.3.0",
+    "expo-av": "~10.2.0",
     "expo-font": "~10.0.4",
     "expo-status-bar": "~1.2.0",
+    "lottie-react-native": "^5.0.1",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-native": "0.64.3",
+    "react-native-countdown-circle-timer": "^3.0.9",
+    "react-native-elements": "^3.4.2",
     "react-native-gesture-handler": "~2.1.0",
     "react-native-paper": "^4.11.2",
     "react-native-reanimated": "1.5",
@@ -33,8 +38,7 @@
     "react-navigation": "^4.4.4",
     "react-navigation-material-bottom-tabs": "^2.3.4",
     "react-navigation-stack": "^2.10.4",
-    "react-navigation-tabs": "^2.11.1",
-    "expo-av": "~10.2.0"
+    "react-navigation-tabs": "^2.11.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

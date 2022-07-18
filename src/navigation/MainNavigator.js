@@ -7,12 +7,14 @@ import SleepNavigator from "./SleepNavigator";
 import MeditationNavigator from "./MeditationNavigator";
 import SelfCareNavigator from "./SelfCareNavigator";
 import HomeScreen from "./../screens/HomeScreen";
+import HomeScreenNavigator from "./HomeScreenNavigator";
+import ChatbotNavigator from "./ChatbotNavigator";
 import ChatbotScreen from "./../screens/ChatbotScreen";
 import Color from "../../constant/Color";
 
 const tabScreenConfig = {
   Home: {
-    screen: HomeScreen,
+    screen: HomeScreenNavigator,
     navigationOptions: {
       tabBarIcon: (tabInfo) => {
         return <Ionicons name="ios-home" size={24} color={tabInfo.tintColor} />;
@@ -36,7 +38,7 @@ const tabScreenConfig = {
   },
 
   Chatbot: {
-    screen: ChatbotScreen,
+    screen: ChatbotNavigator,
     navigationOptions: {
       tabBarIcon: (tabInfo) => {
         return (
@@ -47,6 +49,7 @@ const tabScreenConfig = {
           />
         );
       },
+      tabBarVisible: false,
     },
   },
 
@@ -54,6 +57,7 @@ const tabScreenConfig = {
     screen: SleepNavigator,
     navigationOptions: {
       tabBarIcon: (tabInfo) => {
+        console.log(tabInfo);
         return (
           <MaterialCommunityIcons
             name="sleep"

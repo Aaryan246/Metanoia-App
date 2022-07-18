@@ -6,4 +6,6 @@ export default {
   musicIcon: "#777777",
   musicProgressBar: "#FFD369",
   musicControlBtn: "#FFD369",
+  spiritualBg: "#AA96DA",
+  SessionBg: "#0093AB",
 };

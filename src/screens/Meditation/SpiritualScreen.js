@@ -1,16 +1,20 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import SpiritualPlayer from "../../components/SpiritualPlayer";
 
 const SpiritualScreen = () => {
   return (
     <View style={styles.screen}>
-      <Text>Spiritual</Text>
+      <SpiritualPlayer />
     </View>
   );
 };
 
 SpiritualScreen.navigationOptions = {
   headerTitle: "Spiritual",
+  headerStyle: {
+    backgroundColor: "#AA96DA",
+  },
 };
 
 const styles = StyleSheet.create({
