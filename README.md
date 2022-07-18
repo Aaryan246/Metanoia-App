@@ -20,9 +20,6 @@ meditation, calming sounds, games, etc.
 ## Screenshots
 
 <img src="assets/splashScreen.png" width=300/>
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
-
 
 ## Demo
 
